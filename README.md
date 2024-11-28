@@ -75,10 +75,11 @@ To test the ECS configuration (combined FastAPI and Nginx in single container):
 
 ```bash
 # Build the ECS image
-docker build -t fastapi-ecs .
+docker compose up --build
 
-# Run the container
-docker run -p 80:80 fastapi-ecs
+# Test with cURL
+curl localhost
+curl localhost/health
 ```
 
 ## Understanding the Setup
