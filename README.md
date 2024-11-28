@@ -20,9 +20,9 @@ A demo repository showing how to use UV package manager with FastAPI, running be
 ├── nginx
 │   ├── nginx.conf.ecs        # Nginx config for ECS
 │   └── nginx.conf.local      # Nginx config for local development
-├── Dockerfile                # Combined Dockerfile for ECS
-├── Dockerfile.local          # FastAPI Dockerfile for local dev
-├── Dockerfile.nginx          # Nginx Dockerfile for local dev
+├── Dockerfile                # FastAPI Dockerfile
+├── Dockerfile.local          # Nginx Dockerfile for local dev
+├── Dockerfile.nginx          # Nginx Dockerfile for ECS
 ├── docker-compose.yml        # Local development setup
 ├── pyproject.toml           # Python dependencies
 └── start.sh                 # Script to run FastAPI and Nginx in ECS
