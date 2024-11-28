@@ -1,0 +1,10 @@
+aws_region = "ap-southeast-4"
+environment = "dev"
+allowed_aws_account_arns = [
+  "arn:aws:iam::123456789012:root"  # Replace with your account ARN
+]
+tags = {
+  Project     = "uv-fastapi-ecs"
+  Environment = "dev"
+  Terraform   = "true"
+}

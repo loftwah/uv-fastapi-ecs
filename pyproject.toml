@@ -1,0 +1,7 @@
+[project]
+name = "fastapi-uv-demo"
+version = "0.1.0"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]"
+]
