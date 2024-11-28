@@ -24,7 +24,7 @@ cp terraform.tfvars.example terraform.tfvars
 2. Adjust the variables in `terraform.tfvars`:
 
 ```hcl
-aws_region = "ap-southeast-4"  # Jakarta region
+aws_region = "ap-southeast-4"  # Melbourne region
 environment = "dev"            # or "staging", "prod"
 allowed_aws_account_arns = [
   "arn:aws:iam::ACCOUNT_ID:root"  # Replace with your AWS account ARN
