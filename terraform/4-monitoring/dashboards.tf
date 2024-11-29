@@ -15,6 +15,9 @@ resource "aws_cloudwatch_dashboard" "ecs_dashboard" {
             ["AWS/ECS", "MemoryUtilization", "ClusterName", var.cluster_name, "ServiceName", var.service_name]
           ]
           title = "ECS Cluster Metrics"
+          region = var.aws_region
+          view = "timeSeries"
+          period = 300
         }
       },
       {
@@ -29,6 +32,9 @@ resource "aws_cloudwatch_dashboard" "ecs_dashboard" {
             ["AWS/Logs", "IncomingLogEvents", "LogGroupName", "/ecs/${var.project_name}-nginx-${var.environment}"]
           ]
           title = "Application Logs"
+          region = var.aws_region
+          view = "timeSeries"
+          period = 300
         }
       }
     ]

@@ -1,3 +1,6 @@
+# Log groups are already created by ECS service
+# Commenting out to avoid conflict
+/*
 resource "aws_cloudwatch_log_group" "fastapi" {
   name              = "/ecs/${var.project_name}-fastapi-${var.environment}"
   retention_in_days = 30
@@ -9,3 +12,4 @@ resource "aws_cloudwatch_log_group" "nginx" {
   retention_in_days = 30
   tags              = var.tags
 }
+*/

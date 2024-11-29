@@ -1,10 +1,11 @@
+# Log groups are created by ECS service
 output "log_group_fastapi" {
-  value       = aws_cloudwatch_log_group.fastapi.name
+  value       = "/ecs/${var.project_name}-fastapi-${var.environment}"
   description = "Log group for FastAPI"
 }
 
 output "log_group_nginx" {
-  value       = aws_cloudwatch_log_group.nginx.name
+  value       = "/ecs/${var.project_name}-nginx-${var.environment}"
   description = "Log group for Nginx"
 }
 
