@@ -11,7 +11,7 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode([
     {
       name         = "fastapi"
-      image        = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.project_name}-fastapi-${var.environment}:latest"
+      image        = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/uv-fastapi-fastapi-${var.environment}:latest"
       essential    = true
       portMappings = []
       environment  = var.container_environment
@@ -26,7 +26,7 @@ resource "aws_ecs_task_definition" "app" {
     },
     {
       name         = "nginx"
-      image        = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.project_name}-nginx-${var.environment}:latest"
+      image        = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/uv-fastapi-nginx-${var.environment}:latest"
       essential    = true
       portMappings = [
         {
