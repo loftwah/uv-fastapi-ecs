@@ -1,0 +1,33 @@
+aws_region   = "ap-southeast-4"
+environment  = "dev"
+project_name = "uv-fastapi-ecs"
+
+# Network configuration from 2-network output
+vpc_id             = "vpc-0efb92d5939e480c1"
+private_subnet_ids = ["subnet-010544c3c040cf074", "subnet-096616c09585745f1"]
+public_subnet_ids  = ["subnet-052de854377b2126e", "subnet-08d09836dc8f42985"]
+
+# SSL/TLS Configuration
+ssl_certificate_arn = "arn:aws:acm:ap-southeast-4:your-account-id:certificate/your-cert-id"
+domain_name         = "your-domain.com"
+
+# Optional container configuration
+container_port          = 80
+task_cpu               = 256
+task_memory            = 512
+service_desired_count  = 1
+
+# Environment variables for FastAPI (optional)
+container_environment = [
+  {
+    name  = "API_ENV"
+    value = "dev"
+  }
+]
+
+tags = {
+  Project     = "uv-fastapi-ecs"
+  Environment = "dev"
+  Terraform   = "true"
+  Owner       = "loftwah"
+}
