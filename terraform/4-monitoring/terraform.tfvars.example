@@ -1,0 +1,27 @@
+# AWS Region
+aws_region = "ap-southeast-4"
+
+# Environment name (e.g., dev, staging, prod)
+environment = "dev"
+
+# Project name for tagging and naming resources
+project_name = "uv-fastapi-ecs"
+
+# ECS Cluster and Service configuration
+cluster_name = "uv-fastapi-cluster-dev"
+service_name = "uv-fastapi-service-dev"
+
+# Networking configuration (from 2-network module outputs)
+vpc_id             = "vpc-xxxxxxxx"
+private_subnet_ids = ["subnet-xxxxxxxx", "subnet-yyyyyyyy"]
+public_subnet_ids  = ["subnet-zzzzzzzz", "subnet-aaaaaaaa"]
+
+# Email address for alert notifications
+alert_email = "your-email@example.com"
+
+# Tags to apply to all resources
+tags = {
+  Owner       = "your-name"
+  Environment = "dev"
+  Terraform   = "true"
+}

@@ -2,107 +2,110 @@
 
 This module deploys a FastAPI application with Nginx reverse proxy on Amazon ECS using Fargate.
 
-## Architecture
+## Important Prerequisites
 
-- FastAPI application container
-- Nginx reverse proxy container
-- Application Load Balancer with HTTPS termination
-- ECS Fargate service in private subnets
-- Auto-scaling capabilities
+Before applying this module, ensure you have:
 
-## Prerequisites
+1. Network Infrastructure (from 2-network module):
 
-- ECR repositories with images (from 1-ecr module)
-- VPC with public/private subnets (from 2-network module)
-- ACM certificate for HTTPS
+   ```bash
+   cd ../2-network
+   terraform output
+   ```
 
-## Components
+   Copy these values for your tfvars:
 
-- ALB with HTTP to HTTPS redirection
-- ECS Cluster with Container Insights
-- Fargate Service with blue/green deployment support
-- IAM roles for task execution and runtime
-- CloudWatch log groups for containers
-- Security groups for ALB and tasks
+   - vpc_id
+   - private_subnet_ids
+   - public_subnet_ids
 
-## Usage
+2. SSL Certificate in ACM:
 
-1. Configure required variables:
+   - Must be in the same region (ap-southeast-4)
+   - Get the ARN using:
+
+   ```bash
+   aws acm describe-certificate --certificate-arn YOUR_CERT_ARN --region ap-southeast-4
+   ```
+
+3. ECR repositories with images (from 1-ecr module)
+
+## Configuration
+
+1. Create terraform.tfvars:
 
 ```hcl
-# terraform.tfvars
 aws_region   = "ap-southeast-4"
 environment  = "dev"
 project_name = "uv-fastapi-ecs"
 
-# Network configuration
-vpc_id             = "vpc-xxx"
-private_subnet_ids = ["subnet-xxx", "subnet-yyy"]
-public_subnet_ids  = ["subnet-aaa", "subnet-bbb"]
+# Network configuration (from terraform/2-network/terraform output)
+vpc_id             = "vpc-01da9ae3b1f1bd39d"     # Get from network output
+private_subnet_ids = [
+  "subnet-08f8c6eceab4df2be",                    # Get from network output
+  "subnet-0db67a5d261155fc8"
+]
+public_subnet_ids  = [
+  "subnet-0ed7a5fc23178a38e",                    # Get from network output
+  "subnet-0ffdfe7d2eed82670"
+]
 
 # SSL Certificate
-ssl_certificate_arn = "arn:aws:acm:ap-southeast-4:123456789012:certificate/xxx"
+ssl_certificate_arn = "arn:aws:acm:ap-southeast-4:YOUR_ACCOUNT_ID:certificate/CERT_ID"
+
+# Container Configuration
+container_port         = 80
+task_cpu              = 256
+task_memory           = 512
+service_desired_count = 1
+
+tags = {
+  Project     = "uv-fastapi-ecs"
+  Environment = "dev"
+  Terraform   = "true"
+}
 ```
 
-2. Initialize and apply:
+## Deployment
+
+1. Initialize and apply:
 
 ```bash
 terraform init
 terraform apply
 ```
 
-## Testing the Deployment
+2. Monitor deployment:
 
 ```bash
-# Get your ALB DNS name from terraform output
-ALB_DNS=$(terraform output -raw alb_dns_name)
-
-# Test HTTP to HTTPS redirect (shows the redirect happening)
-curl -v http://$ALB_DNS
-
-# Test HTTP to HTTPS redirect (follows the redirect automatically)
-curl -L http://$ALB_DNS
-
-# Test HTTPS endpoint directly (with certificate bypass)
-curl -k https://$ALB_DNS
-
-# Test HTTPS endpoint with verbose output for debugging
-curl -k -v https://$ALB_DNS
+./monitor.sh
 ```
 
-## Monitoring
-
-Monitor the service using:
+3. Test the connection:
 
 ```bash
-# View service events
-./monitor.sh
-
-# Check container logs
-aws logs get-log-events \
-    --log-group-name "/ecs/uv-fastapi-ecs-fastapi-dev" \
-    --log-stream-name $(aws logs describe-log-streams --log-group-name "/ecs/uv-fastapi-ecs-fastapi-dev" --order-by LastEventTime --descending --limit 1 --query 'logStreams[0].logStreamName' --output text) \
-    --region ap-southeast-4
-
-# Connect to containers
 ./connect.sh
 ```
 
-## Common Issues
+## Troubleshooting
 
-1. 301 Redirect:
+1. "No valid subnet" or VPC errors:
 
-   - Expected when accessing HTTP endpoint (port 80)
-   - ALB automatically redirects to HTTPS (port 443)
-   - Use curl with `-L` flag to follow redirects
+   - Ensure you're using current VPC/subnet IDs from network module
+   - Run `terraform output` in network module to get current values
 
-2. SSL Certificate Warning:
+2. Certificate errors:
 
-   - Expected when using ALB's DNS name
-   - Use `-k` with curl to skip verification
-   - Add proper DNS record when using custom domain
+   - Verify certificate ARN is correct and in ap-southeast-4
+   - Certificate must be ISSUED status
+   - Run ACM describe command to verify
 
-3. Task Deployment Issues:
-   - Check ECS events with `monitor.sh`
-   - Verify ECR image access
-   - Check CloudWatch logs
+3. Container connection issues:
+   - Ensure Session Manager plugin is installed
+   - Check task status in monitor.sh
+   - Verify IAM roles are correct
+
+## Utility Scripts
+
+- `monitor.sh`: Shows service status, task health, and events
+- `connect.sh`: Interactive shell access to containers
